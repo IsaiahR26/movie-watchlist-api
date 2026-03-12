@@ -11,7 +11,7 @@ app.use(express.json());
 
 /* DATABASE CONNECTION */
 
-const pool = new POOl ({
+const pool = new Pool ({
     user: "postgres",
     host: "localhost",
     database: "movie_watchlist_api",
@@ -29,7 +29,7 @@ app.get ("/", (req, res) => {
 
 app.get("/api/v1/movies", async (req, res) => {
     try {
-        const { stuatus, favorite } = req.query;
+        const { status, favorite } = req.query;
 
         let query = "SELECT * FROM movies";
         const values = [];
@@ -56,4 +56,8 @@ app.get("/api/v1/movies", async (req, res) => {
         console.error(error);
         res.status(500).json({ error: "Error fetching movies"});
     }
+});
+
+app.listen (PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
