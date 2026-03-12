@@ -80,6 +80,34 @@ app.post("/api/v1/movies", async (req, res) => {
 });
 
 
+/* PUT REQUEST (Updates exising data in table) */
+
+app.put("/api/v1/movies/:id", async (req,res) => {
+    try {
+        const { id } = req.params;
+        const { title, release_year, status, rating, is_favorite } = req.body;
+
+        const result = await pool.query(
+          `UPDATE movies
+          SET title = $1,
+          release_year = $2,
+          status = $3,
+          rating = $4,
+          is_favorite = $5,
+          updated_at = CURRENT_TIMESTAMP
+          WHERE id = $6
+          RETURNING *`,
+          [title, release_year, status, rating, is_favorite, id]  
+        );
+
+        res.json(result.rows[0]);
+    }   catch(error) {
+        console.error(error);
+        res.status(500).json({ error: "Error updating movie"});
+    }
+});
+
+
 app.listen (PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
