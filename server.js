@@ -8,6 +8,7 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
+app.set("json spaces", 2);
 
 /* DATABASE CONNECTION */
 
@@ -57,6 +58,27 @@ app.get("/api/v1/movies", async (req, res) => {
         res.status(500).json({ error: "Error fetching movies"});
     }
 });
+
+/* POST MOVIES (Basically adds movies to the GET MOVIES list) */
+
+app.post("/api/v1/movies", async (req, res) => {
+    try {
+        const { title, release_year, status, rating, is_favorite } = req.body;
+
+        const result = await pool.query(
+          `INSERT INTO movies  (title, release_year, status, rating, is_favorite)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING *`,
+           [title, release_year, status, rating, is_favorite]  
+        );
+
+        res.status(201).json(result.rows[0]);
+    }   catch (error) {
+        console.error(error);
+        res.status(500).json({error: "Error adding movie"});
+    }
+});
+
 
 app.listen (PORT, () => {
     console.log(`Server running on port ${PORT}`);
