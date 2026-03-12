@@ -4,7 +4,7 @@ const { Pool } = require("pg");
 require("dotenv").config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -12,13 +12,20 @@ app.set("json spaces", 2);
 
 /* DATABASE CONNECTION */
 
-const pool = new Pool ({
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+/*const pool = new Pool ({
     user: "postgres",
     host: "localhost",
     database: "movie_watchlist_api",
     password: process.env.DB_PASSWORD,
     port: 5432,
-});
+}); */
 
 /* TEST THE ROUTE */
 
