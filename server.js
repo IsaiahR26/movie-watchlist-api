@@ -12,12 +12,31 @@ app.set("json spaces", 2);
 
 /* DATABASE CONNECTION */
 
-const pool = new Pool({
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    })
+  : new Pool({
+      user: "postgres",
+      host: "localhost",
+      database: "movie_watchlist_api",
+      password: process.env.DB_PASSWORD,
+      port: 5432,
+      ssl: false,
+    });
+
+
+
+
+/* const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
-});
+}); */
 
 /*const pool = new Pool ({
     user: "postgres",
@@ -76,7 +95,7 @@ app.get("/api/v1/movies/:id", async (req, res) => {
         [id]
     );
 
-    res.json(result.rows[0]);
+    res.json(result.rows[0])
 });
 
 /* POST MOVIES (Basically adds movies to the GET MOVIES list) */
